@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Brett's House",
+    "state": "Oregon",
+    "city": "Bend",
+    "county": "Deschutes County",
+    "street_address": "1982 NE Red Rock Ln.",
+    "country": "United States",
+    "created_at": "2024-01-15 01:00:00-06",
+    "updated_at": "2024-01-15 01:00:00-06"
+  },
+  {
+    "name": "North Sister",
+    "state": "Oregon",
+    "city": null,
+    "county": "Deschutes Country",
+    "street_address": null,
+    "country": "United States",
+    "created_at": "2024-01-15 01:00:00-06",
+    "updated_at": "2024-01-15 01:00:00-06"
+  }
+]
