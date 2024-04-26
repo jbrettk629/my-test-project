@@ -1,4 +1,3 @@
-# import psycopg2
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -17,12 +16,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
-# connection = psycopg2.connect(
-#     host = "localhost",
-#     database = "myprojectdb",
-#     user = "josephkalbacher",
-# )
-# cursor = connection.cursor()
-
-# connection.close()
