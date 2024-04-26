@@ -1,20 +1,18 @@
-# import psycopg2
-# from sqlalchemy import create_engine
-# from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
-# def get_engine():
-#     url = f"postgresql://localhost:5432/myprojectdb"
-#     return create_engine(url, pool_size=50, echo=False)
+DB_URL = "postgresql+psycopg2://localhost:5432/myprojectdb"
 
-# def get_session():
-#     engine = get_engine()
-#     return sessionmaker(bind=engine)
+engine = create_engine(DB_URL, pool_size=50, echo=False, future=True, connect_args={})
 
-# connection = psycopg2.connect(
-#     host = "localhost",
-#     database = "myprojectdb",
-#     user = "josephkalbacher",
-# )
-# cursor = connection.cursor()
+SessionLocal = sessionmaker(bind=engine, future=True)
 
-# connection.close()
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

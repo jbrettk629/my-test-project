@@ -1,6 +1,13 @@
-from fastapi import FastAPI, Path
+from fastapi import FastAPI
 
 from endpoints import users, locations
+from db.connections import engine
+from db.models import users, locations
+from endpoints.users import router as users_router
+from endpoints.locations import router as locations_router
+
+users.Base.metadata.create_all(bind=engine)
+locations.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Bretts FastAPI Project",
@@ -13,8 +20,8 @@ app = FastAPI(
     license_info={"name": "Open Source"}
 )
 
-app.include_router(users.router)
-app.include_router(locations.router)
+app.include_router(users_router)
+app.include_router(locations_router)
 
 
 

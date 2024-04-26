@@ -1,25 +1,24 @@
 import fastapi
 from typing import List
-from models.models import Person
-from db.temp_db import DB, create_person
+from cruds.users import get_user, get_users, create_user
+from db.connections import get_db
+from sqlalchemy.orm import Session
+from fastapi import Depends, HTTPException
+from pydantic_schemas.user import User, UserCreate
 
 router = fastapi.APIRouter()
 
 
-@router.get("/users", response_model=List[Person])
-async def read_root():
-    return DB["users"]
+@router.get("/users", response_model=List[User])
+async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return get_users(db, skip=skip, limit=limit)
 
 
 @router.post("/create_user")
-async def insert_user(user: Person):
-    create_person(user.name, user.age)
-    return "Success"
+async def insert_user(user: UserCreate, db: Session = Depends(get_db)):
+    return create_user(db, user)
 
 
 @router.get("/users/{id}")
-async def get_user(id: int = fastapi.Path(..., description="The id of the user to retrieve")):
-    for person in DB:
-        if person.id == id:
-            return person
-    return "No User Found"
+async def reed_user(id: int, db: Session = Depends(get_db)):
+    return get_user(db, id)
