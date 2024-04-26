@@ -1,23 +1,22 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from sqlalchemy.exc import SQLAlchemyError
 
 from db.models.users import User
 from pydantic_schemas.user import UserCreate
 
-def get_user(db: Session, user_id: int):
-    return db.query(User).filter(User.id == user_id).first()
+async def get_user(db: AsyncSession, user_id: int):
+    query = select(User).where(User.id == user_id)
+    result = await db.execute(query)
+    return result.scalar_one_or_none()
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(User).offset(skip).limit(limit).all()
+async def get_users(db: AsyncSession, skip: int = 0, limit: int = 100):
+    query = select(User)
+    result = await db.execute(query)
+    return result.scalars()
 
-def get_users_by_address(db: Session, location_id: int):
-    return db.query(User).filter(User.address == location_id).all()
 
-
-def create_user(db: Session, user: UserCreate):
+async def create_user(db: AsyncSession, user: UserCreate):
     insert = User(name=user.name, age=user.age, bio=user.bio, address=user.address)
     db.add(insert)
-    db.commit()
-    db.refresh(insert)
-    return user
-
-
+    await db.commit()
