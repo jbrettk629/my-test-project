@@ -1,15 +1,21 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from sqlalchemy.exc import SQLAlchemyError
 
 from db.models.locations import Location
 from pydantic_schemas.location import LocationCreate
 
-def get_location(db: Session, location_id: int):
-    return db.query(Location).filter(Location.id == location_id).first()
+async def get_location(db: AsyncSession, location_id: int):
+    query = select(Location).where(Location.id == location_id)
+    result = await db.execute(query)
+    return result.scalar_one_or_none()
 
-def get_locations(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Location).offset(skip).limit(limit).all()
+async def get_locations(db: AsyncSession, skip: int = 0, limit: int = 100):
+    query = select(Location)
+    result = await db.execute(query)
+    return result.scalars()
 
-def create_location(db: Session, l: LocationCreate):
+async def create_location(db: AsyncSession, l: LocationCreate):
     insert = Location(
         name=l.name,
         city=l.city,
@@ -19,6 +25,6 @@ def create_location(db: Session, l: LocationCreate):
         country=l.country
         )
     db.add(insert)
-    db.commit()
+    await db.commit()
     db.refresh(insert)
     return insert
